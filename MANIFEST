@@ -1,0 +1,11 @@
+Changes
+ignore.txt
+lib/S3/REST/Auth.pm
+LICENSE
+Makefile.PL
+MANIFEST			This list of files
+README
+README.md
+t/auth-1.t
+t/callback-attrs.t
+t/manifest.t
