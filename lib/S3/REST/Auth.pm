@@ -1,11 +1,16 @@
 package S3::REST::Auth;
-use 5.10.1;
+use 5.006;
 use strict;
 use warnings;
 use Carp qw< croak >;
 use Digest::SHA qw< hmac_sha1 >;
 use URI::Escape qw< uri_escape >;
 use MIME::Base64 qw< encode_base64 >;
+
+# for more info, see:
+#
+#     http://s3.amazonaws.com/doc/s3-developer-guide/RESTAuthentication.html
+#
 
 our $VERSION = '0.1';
 
@@ -29,7 +34,7 @@ do {
     my $method = $_;
     *{$method} = sub {
         my($self, @bad) = @_;
-        die "method $method is a getter"
+        croak "method $method is a getter"
             if @bad;
         return ($self->{$method} && ref $self->{$method} eq 'CODE')
             ? $self->{$method}->()
@@ -39,7 +44,7 @@ do {
 
 sub new {
     my($class, $args, @bad) = @_;
-    die "too many arguments passed"
+    croak "too many arguments passed"
         if @bad;
     $args ||= {};
     my %self = map {
@@ -58,11 +63,11 @@ sub _seconds_into_the_future {
 
 sub TemporaryURL {
     my($self, $path, $expire_seconds, @bad) = @_;
-    die "too many arguments passed"
+    croak "too many arguments passed"
         if @bad;
     $self = $self->new()
         unless ref $self;
-    die "path is required"
+    croak "path is required"
         unless $path && length $path;
 
     $path = "/$path"
@@ -103,17 +108,6 @@ sub TemporaryURL {
         $then,
         uri_escape($sig),
     );
-}
-
-if ($0 eq __FILE__) {
-    my $gen = S3::REST::Auth->new();
-    my $url = $gen->TemporaryURL('/public/wine.png');
-    printf("test: %s\n", $url);
-
-    my $gen1 = S3::REST::Auth->new({
-        bucket => 'charlie',
-    });
-    printf("test1: %s\n", $gen1->TemporaryURL('/chocolate/factory', 3600));
 }
 
 1;
