@@ -1,5 +1,5 @@
 package S3::REST::Auth;
-use 5.006;
+use 5.10.1;
 use strict;
 use warnings;
 use Carp qw< croak >;
