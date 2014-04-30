@@ -46,12 +46,12 @@ sub new {
     my($class, $args, @bad) = @_;
     croak "too many arguments passed"
         if @bad;
-    $args ||= {};
+    my %args = %{$args||{}};
     my %self = map {
-        $_ => ((delete $args->{$_}) // $class->can("_dfl_attr_$_")->())
+        $_ => ((delete $args{$_}) // $class->can("_dfl_attr_$_")->())
     } COMMON_ATTRS;
-    die "unknown named arguments given: @{[sort keys %$args]}"
-        if keys %$args;
+    die "unknown named arguments given: @{[sort keys %args]}"
+        if keys %args;
     return bless {%self}, $class;
 }
 
